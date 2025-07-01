@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+
+<body>
+
+  <div class="search-bar">
+    <input type="text" id="cityInput" placeholder="Aktobe">
+    <button id="searchButton">🔍</button>
+  </div>
+  <div class="weather-app">
+    <div class="main" id="mainWeather">
+      <div id="temperature"></div>
+      <div id="icon"></div>
+      <div id="cityName"></div>
+      <div class="heart" id="heartIcon">♡</div>
+    </div>
+    <div class="locations">
+      <h3>Added Locations:</h3>
+      <ul id="favoritesList"></ul>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+
+</html>
