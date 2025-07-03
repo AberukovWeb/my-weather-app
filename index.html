@@ -11,20 +11,25 @@
 
 <body>
 
-  <div class="search-bar">
-    <input type="text" id="cityInput" placeholder="Aktobe">
-    <button id="searchButton">🔍</button>
-  </div>
-  <div class="weather-app">
-    <div class="main" id="mainWeather">
-      <div id="temperature"></div>
-      <div id="icon"></div>
-      <div id="cityName"></div>
-      <div class="heart" id="heartIcon">♡</div>
+  <div class="app-wrapper">
+    <div class="search-bar">
+      <input type="text" placeholder="Введите город" id="searchInput" />
+      <button id="searchButton" aria-label="Поиск">
+        🔍
+      </button>
     </div>
-    <div class="locations">
-      <h3>Added Locations:</h3>
-      <ul id="favoritesList"></ul>
+    <div class="weather-app">
+      <div class="main" id="mainWeather">
+        <div id="temperature"></div>
+        <div id="icon"></div>
+        <div id="cityName"></div>
+        <div class="heart" id="heartIcon">♡</div>
+        <div class="details" id="weatherDetails"></div>
+      </div>
+      <div class="locations">
+        <h3>Избранное:</h3>
+        <ul id="favoritesList"></ul>
+      </div>
     </div>
   </div>
 
