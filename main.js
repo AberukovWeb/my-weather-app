@@ -1,26 +1,38 @@
-const favorites = [];
 const serverUrl = 'https://api.openweathermap.org/data/2.5/weather';
+const forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast';
 const apiKey = 'f660a2fb1e4bad108d6160b7f58c555f';
+const favorites = [];
+
+document.getElementById('searchButton').addEventListener('click', handleSearch);
+document.getElementById('heartIcon').addEventListener('click', addFavorite);
+
+document.getElementById('searchInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleSearch();
+});
+
+let currentWeather = null;
 
 function renderFavorites() {
   const list = document.getElementById('favoritesList');
   list.innerHTML = '';
-  favorites.forEach(city => {
+  favorites.forEach(favoriteCity => {
     const li = document.createElement('li');
-    li.textContent = city;
-
-    const removeBtn = document.createElement('span');
-    removeBtn.textContent = '✖';
-    removeBtn.classList.add('remove-btn');
-    removeBtn.addEventListener('click', () => removeFavorite(city));
-
-    li.appendChild(removeBtn);
+    li.className = 'favorite-item';
+    li.innerHTML = `
+      <span class="info">
+        <img src="${favoriteCity.icon}" alt="icon">
+        <span class="city-name">${favoriteCity.city}</span>
+        <span>${favoriteCity.temp}°</span>
+      </span>
+      <span class="remove-btn" title="Remove">✖</span>
+    `;
+    li.querySelector('.remove-btn').addEventListener('click', () => removeFavorite(favoriteCity.city));
     list.appendChild(li);
   });
 }
 
 function removeFavorite(city) {
-  const index = favorites.indexOf(city);
+  const index = favorites.findIndex(f => f.city === city);
   if (index !== -1) {
     favorites.splice(index, 1);
     renderFavorites();
@@ -28,47 +40,77 @@ function removeFavorite(city) {
 }
 
 function fetchWeather(cityName) {
-  const url = `${serverUrl}?q=${cityName}&appid=${apiKey}&units=metric`;
-  fetch(url)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('City not found');
-      }
-      return response.json();
+  fetch(`${serverUrl}?q=${cityName}&appid=${apiKey}&units=metric`)
+    .then(res => {
+      if (!res.ok) throw new Error('Город не найден');
+      return res.json();
     })
     .then(data => {
       const temperature = Math.round(data.main.temp);
+      const feelsLike = Math.round(data.main.feels_like);
       const iconCode = data.weather[0].icon;
       const iconUrl = `https://openweathermap.org/img/wn/${iconCode}.png`;
+      const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      currentWeather = {
+        city: data.name,
+        temp: temperature,
+        icon: iconUrl,
+        feelsLike,
+        sunrise,
+        sunset
+      };
 
       document.getElementById('temperature').innerText = `${temperature}°`;
-      document.getElementById('icon').innerHTML = `<img src="${iconUrl}" alt="weather icon">`;
+      document.getElementById('icon').innerHTML = `<img src="${iconUrl}" alt="icon">`;
       document.getElementById('cityName').innerText = data.name;
       document.getElementById('heartIcon').classList.remove('favorited');
+
+      return fetch(`${forecastUrl}?q=${data.name}&appid=${apiKey}&units=metric`);
     })
-    .catch(error => {
-      alert('Ошибка загрузки данных о погоде: ' + error.message);
-      console.error(error);
+    .then(res => res.json())
+    .then(forecast => {
+      const today = new Date().getDate();
+      const targetHours = [9, 12, 15, 18, 21];
+      const hourlyData = forecast.list.filter(entry => {
+        const date = new Date(entry.dt * 1000);
+        return date.getDate() === today && targetHours.includes(date.getHours());
+      });
+
+      let forecastHtml = '';
+      targetHours.forEach(hour => {
+        const match = hourlyData.find(entry => new Date(entry.dt * 1000).getHours() === hour);
+        const tempStr = match ? `${Math.round(match.main.temp)}°` : '—';
+        forecastHtml += `<div class="forecast-item">${hour}:00 — ${tempStr}</div>`;
+      });
+
+      document.getElementById('weatherDetails').innerHTML = `
+      <div class="detail-item"><strong>Ощущается как:</strong> ${currentWeather.feelsLike}°</div>
+      <div class="detail-item"><strong>Восход:</strong> ${currentWeather.sunrise}</div>
+      <div class="detail-item"><strong>Закат:</strong> ${currentWeather.sunset}</div>
+      <div class="detail-title">В течение дня:</div>
+      <div class="forecast-block">
+        ${forecastHtml}
+      </div>
+    `;
+    })
+    .catch(err => {
+      alert('Ошибка загрузки погоды: ' + err.message);
+      console.error(err);
     });
 }
 
 function handleSearch() {
-  const city = document.getElementById('cityInput').value.trim();
+  const city = document.getElementById('searchInput').value.trim();
   if (city) fetchWeather(city);
 }
 
 function addFavorite() {
-  const city = document.getElementById('cityName').innerText;
-  if (!favorites.includes(city)) {
-    favorites.push(city);
+  if (currentWeather && !favorites.find(f => f.city === currentWeather.city)) {
+    favorites.push({ ...currentWeather });
     renderFavorites();
     document.getElementById('heartIcon').classList.add('favorited');
   }
 }
 
-document.getElementById('cityInput').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') handleSearch();
-});
-
-document.getElementById('searchButton').addEventListener('click', handleSearch);
-document.getElementById('heartIcon').addEventListener('click', addFavorite);
