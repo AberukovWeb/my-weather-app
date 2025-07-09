@@ -19,7 +19,8 @@ body {
 }
 
 .app-wrapper {
-  min-height: 300dvh;
+  min-height: 100dvh;
+  overflow: auto; 
   border: 2px solid #fff;
   background-color: #007BFF;
   padding: 30px;
