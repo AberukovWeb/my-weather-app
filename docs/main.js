@@ -17,6 +17,12 @@ function renderFavorites() {
   favorites.forEach(favoriteCity => {
     const li = document.createElement('li');
     li.className = 'favorite-item';
+
+
+    if (currentWeather && favoriteCity.city === currentWeather.city) {
+      li.classList.add('active');
+    }
+
     li.innerHTML = `
       <span class="info">
         <img src="${favoriteCity.icon}" alt="icon">
@@ -25,7 +31,16 @@ function renderFavorites() {
       </span>
       <span class="remove-btn" title="Remove">✖</span>
     `;
-    li.querySelector('.remove-btn').addEventListener('click', () => removeFavorite(favoriteCity.city));
+
+    li.querySelector('.remove-btn').addEventListener('click', e => {
+      e.stopPropagation();
+      removeFavorite(favoriteCity.city);
+    });
+
+    li.addEventListener('click', () => {
+      fetchWeather(favoriteCity.city);
+    });
+
     list.appendChild(li);
   });
 }
@@ -105,6 +120,9 @@ function fetchWeather(cityName) {
         <div class="detail-title">В течение дня:</div>
         <div class="forecast-block">${forecastHtml}</div>
       `;
+
+
+      renderFavorites();
     })
     .catch(err => {
       alert('Ошибка загрузки погоды: ' + err.message);
