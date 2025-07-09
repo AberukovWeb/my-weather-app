@@ -19,6 +19,7 @@ body {
 }
 
 .app-wrapper {
+  min-height: 100dvh;
   border: 2px solid #fff;
   background-color: #007BFF;
   padding: 30px;
