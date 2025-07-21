@@ -3,6 +3,7 @@ const forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast';
 const apiKey = 'f660a2fb1e4bad108d6160b7f58c555f';
 let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 
+
 document.getElementById('searchButton').addEventListener('click', handleSearch);
 document.getElementById('heartIcon').addEventListener('click', addFavorite);
 document.getElementById('searchInput').addEventListener('keydown', e => {
@@ -149,6 +150,5 @@ function handleSearch() {
   const city = document.getElementById('searchInput').value.trim();
   if (city) fetchWeather(city);
 }
-
 
 renderFavorites();
