@@ -1,39 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="ru">
+ <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Weather</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+  <link rel="stylesheet" href="style.css" />
+ </head>
 
-
-<body>
-
+ <body>
   <div class="app-wrapper">
-    <div class="search-bar">
-      <input type="text" placeholder="Введите город" id="searchInput" />
-      <button id="searchButton" aria-label="Поиск">
-        🔍
-      </button>
+   <div id="weather-bg" aria-hidden="true" class="bg-default"></div>
+
+   <div class="search-bar">
+    <div class="input-wrapper">
+     <input
+      type="text"
+      placeholder="Введите город"
+      id="searchInput"
+      aria-label="Город"
+     />
     </div>
-    <div class="weather-app">
-      <div class="main" id="mainWeather">
-        <div id="temperature"></div>
-        <div id="icon"></div>
-        <div id="cityName"></div>
-        <div class="heart" id="heartIcon">♡</div>
-        <div class="details" id="weatherDetails"></div>
+    <button id="searchButton" aria-label="Поиск" class="primary-btn">
+     🔍
+    </button>
+   </div>
+
+   <div class="weather-app">
+    <div class="main" id="mainWeather">
+     <div class="top-row">
+      <div id="temperature"></div>
+      <div id="icon"></div>
+      <div class="city-heart">
+       <div id="cityName"></div>
+       <div
+        class="heart"
+        id="heartIcon"
+        role="button"
+        aria-pressed="false"
+        tabindex="0"
+       >
+        ♡
+       </div>
       </div>
-      <div class="locations">
-        <h3>Избранное:</h3>
-        <ul id="favoritesList"></ul>
+     </div>
+
+     <div class="details" id="weatherDetails">
+      <div class="placeholder" id="no-city">
+       Введите город выше, чтобы увидеть погоду.
       </div>
+     </div>
+
+     <div class="forecast-group">
+      <div>
+       <div class="detail-title">Почасовой прогноз (24 ч):</div>
+       <div id="hourlyForecast" class="forecast-block"></div>
+      </div>
+      <div>
+       <div class="detail-title">Прогноз по дням:</div>
+       <div id="dailyForecast" class="forecast-block"></div>
+      </div>
+     </div>
     </div>
+
+    <div class="locations">
+     <h3>Избранное:</h3>
+     <ul id="favoritesList"></ul>
+    </div>
+   </div>
   </div>
 
   <script src="main.js"></script>
-</body>
-
+ </body>
 </html>
